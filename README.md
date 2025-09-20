@@ -1,4 +1,4 @@
-**# JG To-Do List
+## JG To-Do List
 
 Este é um projeto de desenvolvimento de uma aplicação de lista de tarefas (To-Do List), criada para demonstrar habilidades em tecnologias front-end.
 
@@ -54,3 +54,15 @@ Para executar este projeto localmente no seu ambiente de desenvolvimento, siga o
 
 - GitHub: https://github.com/Jorge-Gabriel97
 - LinkedIn: https://www.linkedin.com/in/jorge-gabriel-579605228/
+
+## Erros Bugs enfrentados
+
+Tínhamos um problema no código que fazia com que, ao tentar remover apenas as tarefas concluídas, a lista inteira fosse apagada.
+Isso acontecia porque, quando clicávamos na caixinha para marcar ou desmarcar uma tarefa, o programa se confundia com os números de identificação (IDs). Se uma tarefa tinha o ID "12", por exemplo, o programa lia apenas o primeiro dígito, o "1", e acabava atualizando a tarefa errada.
+Isso criava uma bagunça nos dados salvos, e quando pedíamos para apagar as tarefas marcadas, o programa se perdia e apagava tudo.
+
+**Descrição da correção**
+
+Ajustamos a Leitura do ID: Primeiro, consertamos a parte do código que lia o número de identificação da tarefa. Agora, quando clicamos na tarefa de ID "12", ele entende o número "12" por completo, e não apenas "1". Isso garante que a tarefa certa seja marcada como concluída.
+Centralizamos a Exibição: Para evitar futuras confusões, criamos uma função única responsável por desenhar a lista na tela. Agora, sempre que adicionamos, removemos ou alteramos uma tarefa, essa função redesenha a lista inteira a partir dos dados salvos, garantindo que o que vemos na tela é sempre um reflexo fiel do que está guardado na memória.
+Com isso, o sistema agora consegue identificar corretamente quais tarefas estão concluídas e apaga apenas elas, como esperado.
