@@ -1,11 +1,17 @@
-let tasks = [
-    { id: 1, descripition: "Comprar pão", checked: false },
-    { id: 2, descripition: "Estudar JavaScript", checked: true },
-    { id: 3, descripition: "Fazer exercícios", checked: false }
-];
+let tasks = []
 
+const getTasksFromLocalStorage = () => {
+    const localTasks = JSON.parse(window.localStorage.getItem('tasks'));
+    return localTasks ? localTasks : [];
+}
+
+const setTasksInLocalStorage = (tasks) => {
+    window.localStorage.setItem('tasks', JSON.stringify(tasks));
+}
 const removeTask = (tasksId) => {
-    tasks = tasks.filter(({ id }) => parseInt(id) !== parseInt(tasksId));
+    const tasks = getTasksFromLocalStorage();
+    const updatadeTasks = tasks.filter(({ id }) => parseInt(id) !== parseInt(tasksId));
+    setTasksInLocalStorage(updatadeTasks);
 
     document
         .getElementById('todo-list')
@@ -14,18 +20,21 @@ const removeTask = (tasksId) => {
 }
 
 const removeDoneTasks = () => {
+    const tasks = getTasksFromLocalStorage();
     const tasksToRemove = tasks
         .filter(({ checked }) => checked)
         .map(({ id }) => id);
-        console.log(tasksToRemove);
 
-        tasks = tasks.filter(({ checked }) => !checked);
+    const updatadeTasks = tasks.filter(({ checked }) => !checked);
+    setTasksInLocalStorage(updatadeTasks);
 
-        tasksToRemove.forEach((tasksToRemove) => {
-            document
+      tasks.filter(({ checked }) => !checked);
+
+    tasksToRemove.forEach((tasksToRemove) => {
+        document
             .getElementById('todo-list')
             .removeChild(document.getElementById(tasksToRemove))
-})
+    })
 }
 
 const createTaskListItem = (task, checkbox) => {
@@ -48,13 +57,15 @@ const createTaskListItem = (task, checkbox) => {
 }
 
 const onCheckboxClick = (event) => {
-    const [id] = event.target.id.split('-')[0];
-    
-    tasks = tasks.map((task) => {
-        return (parseInt(id) === parseInt(task.id)) 
+    const id = event.target.id.split('-')[0];
+    const tasks = getTasksFromLocalStorage();
+
+    const updatadeTasks = tasks.map((task) => {
+        return (parseInt(id) === parseInt(task.id))
             ? { ...task, checked: event.target.checked }
-            : task;       
-})
+            : task;
+    })
+    setTasksInLocalStorage(updatadeTasks);
 }
 console.log(tasks);
 
@@ -65,7 +76,7 @@ const getCheckBoxInput = ({ id, descripition, checked }) => {
     const wrapper = document.createElement('div');
     const checkboxId = `${id}-checkbox`;
 
-    
+
     checkbox.type = 'checkbox';
     checkbox.id = checkboxId;
     checkbox.checked = checked || false;
@@ -83,7 +94,8 @@ const getCheckBoxInput = ({ id, descripition, checked }) => {
 }
 
 const getNewTaskId = () => {
-    const lastTask = tasks[tasks.length - 1];
+    const tasksFromLocal = getTasksFromLocalStorage(); 
+    const lastTask = tasksFromLocal[tasksFromLocal.length - 1];
     return lastTask ? lastTask.id + 1 : 1;
 }
 
@@ -95,13 +107,22 @@ const getNewTaskData = (event) => {
 
 const createTask = (event) => {
     event.preventDefault();
-    const newTaskData = getNewTaskData(event);    
+    const newTaskData = getNewTaskData(event);
 
 
     const checkbox = getCheckBoxInput(newTaskData)
     createTaskListItem(newTaskData, checkbox);
 
+    const tasks = getTasksFromLocalStorage();
+    const updatadeTasks = [
+        ...tasks,
+        { id: newTaskData.id, descripition: newTaskData.descripition, checked: false }
+    ]
+    setTasksInLocalStorage(updatadeTasks);
+
     tasks.push({ id: newTaskData.id, descripition: newTaskData.descripition, checked: false });
+
+    document.getElementById('descripition').value = '';
 
 }
 
@@ -109,9 +130,9 @@ window.onload = function () {
     const form = this.document.getElementById('create-todo-form');
     form.addEventListener('submit', createTask);
 
-    tasks.forEach((task) => {
-       
-        const checkbox = getCheckBoxInput(task);      
-        createTaskListItem(task, checkbox);        
+    const localTasks = getTasksFromLocalStorage(); 
+    localTasks.forEach((task) => { 
+        const checkbox = getCheckBoxInput(task);
+        createTaskListItem(task, checkbox);
     });
 }
