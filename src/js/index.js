@@ -105,9 +105,16 @@ const getNewTaskData = (event) => {
     return { descripition, id }
 }
 
-const createTask = (event) => {
+const getCreatedTaskInfo = (event) =>  new Promise((resolve) => {
+    setTimeout(() => {
+        resolve(getNewTaskData(event))
+    }, 2000);
+})    
+
+const createTask = async (event) => {
     event.preventDefault();
-    const newTaskData = getNewTaskData(event);
+    document.getElementById('save-task').setAttribute('disabled', true)
+    const newTaskData =  await getCreatedTaskInfo(event);
 
 
     const checkbox = getCheckBoxInput(newTaskData)
@@ -123,6 +130,7 @@ const createTask = (event) => {
     tasks.push({ id: newTaskData.id, descripition: newTaskData.descripition, checked: false });
 
     document.getElementById('descripition').value = '';
+    document.getElementById('save-task').removeAttribute('disabled', false)
 
 }
 
